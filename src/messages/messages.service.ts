@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateMessageDto, CreateReactionDto } from './dto/index';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +12,7 @@ import { convertEmojiToAscii } from './helpers/emojiToAscii';
 import { Comment, Message, Reaction } from './entities/index';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { RequestContext } from 'nestjs-request-context/dist/request-context.model';
+import { transformMessageResp } from './helpers/transformsResponse';
 
 @Injectable()
 export class MessagesService {
@@ -20,11 +26,12 @@ export class MessagesService {
   ) {}
   async create(createMessageDto: CreateMessageDto) {
     try {
+      const userID = RequestContext.currentContext.req.user.id;
       const { title, content } = createMessageDto;
       const message = await this.messagesRepository.create({
         title,
         content,
-        user_id: 1,
+        user_id: userID,
       });
       await this.messagesRepository.save(message);
       return message;
@@ -33,9 +40,9 @@ export class MessagesService {
     }
   }
 
-  findAll() {
+  async findAll() {
     try {
-      const messages = this.messagesRepository.find({
+      const messages = await this.messagesRepository.find({
         relations: ['reactions', 'comments'],
       });
       return messages;
@@ -44,32 +51,42 @@ export class MessagesService {
     }
   }
 
-  findAllMe() {
+  async findAllMe() {
     try {
       const userID = RequestContext.currentContext.req.user.id;
-      const messages = this.messagesRepository.find({
+      const messages = await this.messagesRepository.find({
         where: { user_id: userID, active: true },
         relations: ['reactions', 'comments'],
       });
+      console.log(messages);
+
       return messages;
     } catch (error) {
       console.log(error);
     }
   }
 
-  findOneMe(id: number) {
+  async findOneMe(id: number) {
     try {
       const userID = RequestContext.currentContext.req.user.id;
-      const message = this.messagesRepository.find({
+      const message = await this.messagesRepository.findOne({
         where: { user_id: userID, id: id, active: true },
         relations: ['reactions', 'comments'],
       });
+
       if (!message) {
-        throw new NotFoundException('Message not found....');
+        return {
+          message: 'El mensaje no fue encontrado',
+          status: HttpStatus.NOT_FOUND,
+        };
       }
       return message;
     } catch (error) {
-      //console.log(error);
+      console.log(error);
+      throw new HttpException(
+        'Ha ocurrido un error en la búsqueda del mensaje',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -82,15 +99,22 @@ export class MessagesService {
       });
 
       if (!message) {
-        throw new NotFoundException('Message not found....');
+        return {
+          message: 'El mensaje no fue encontrado',
+          status: HttpStatus.NOT_FOUND,
+        };
       }
       await this.messagesRepository.update({ id }, { active: false });
       return {
         delete: true,
-        status: true,
+        status: 'OK',
       };
     } catch (error) {
-      //console.log(error);
+      console.log(error);
+      throw new HttpException(
+        'Ha ocurrido un error en la búsqueda del mensaje',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -99,10 +123,12 @@ export class MessagesService {
     const userID = RequestContext.currentContext.req.user.id;
     const message = await this.messagesRepository.findOne({
       where: { id: id, active: true },
-      relations: ['reactions', 'comments'],
     });
     if (!message) {
-      throw new NotFoundException('Mensaje no encontrado');
+      return {
+        message: 'El mensaje no fue encontrado',
+        status: HttpStatus.NOT_FOUND,
+      };
     }
     if (message.user_id === userID) {
       throw new UnauthorizedException('No puedes reacionar ');
@@ -113,18 +139,23 @@ export class MessagesService {
       author_id: userID,
       mensaje_id: id,
     });
-    await this.reactionRepository.save(rea);
-    return rea;
+    const resp = await this.messagesRepository.findOne({
+      where: { id: id, active: true },
+      relations: ['reactions', 'comments'],
+    });
+    return transformMessageResp(resp);
   }
   async crearComment(id: number, createCommentDto: CreateCommentDto) {
     const { comment } = createCommentDto;
     const userID = RequestContext.currentContext.req.user.id;
     const message = await this.messagesRepository.findOne({
       where: { id: id, active: true },
-      relations: ['reactions', 'comments'],
     });
     if (!message) {
-      throw new NotFoundException('Mensaje no encontrado');
+      return {
+        message: 'El mensaje no fue encontrado',
+        status: HttpStatus.NOT_FOUND,
+      };
     }
     if (message.user_id === userID) {
       throw new UnauthorizedException('No puedes comentar ');
@@ -135,6 +166,10 @@ export class MessagesService {
       mensaje_id: id,
     });
     await this.commentRepository.save(com);
-    return com;
+    const resp = await this.messagesRepository.findOne({
+      where: { id: id, active: true },
+      relations: ['reactions', 'comments'],
+    });
+    return transformMessageResp(resp);
   }
 }

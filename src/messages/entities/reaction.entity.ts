@@ -12,6 +12,9 @@ import { Message } from './message.entity';
 
 @Entity()
 export class Reaction {
+  map(arg0: (reaction: any) => { reaction: any; author: any; }) {
+      throw new Error("Method not implemented.");
+  }
   @PrimaryGeneratedColumn()
   id: number;
   @Column('text')

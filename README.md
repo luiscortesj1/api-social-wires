@@ -15,3 +15,7 @@
 ```docker-compose up -d```
 6. Levantar el proyecto ```yarn run start:dev```
 
+Debido a la seguridad de la api se pasan los usuarios que crean mensajes , comentarios y reacciones se pasan por medio del backend ya que se toman de la request
+
+Se implemeto una funcion que permite enviar un mensaje al correo del usuario registrado, dandole la bienvenida a la pagina 
+

@@ -11,6 +11,9 @@ import { Message } from './message.entity';
 
 @Entity()
 export class Comment {
+  map(arg0: (comment: any) => { comment: any; author: any; }) {
+      throw new Error("Method not implemented.");
+  }
   @PrimaryGeneratedColumn()
   id: number;
 

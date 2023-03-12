@@ -1,0 +1,298 @@
+{
+	"info": {
+		"_postman_id": "352c7b40-190f-465c-bcf1-f8ba9b27c75d",
+		"name": "Api-social-wires",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21620981"
+	},
+	"item": [
+		{
+			"name": "Crear Usuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"alexj@gmail.com\",\r\n    \"username\":\"alex\",\r\n    \"password\":\"Abc123\",\r\n    \"fullname\":\"Alex\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/wires/auth/signup",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"wires",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Usuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"alexfj@gmail.com\",\r\n    \"password\":\"Abc123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/wires/auth/signin",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"wires",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear Mensaje",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\":\"post\",\r\n    \"content\":\"que vaciones\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/wires/messages",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"wires",
+						"messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ver Mensajes",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/wires/messages",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"wires",
+						"messages"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ver Mensajes (ME)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/wires/messages/me",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"wires",
+						"messages",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mensaje (ME) ById",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/wires/messages/me/6",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"wires",
+						"messages",
+						"me",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Borrar Mensaje (ME)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/wires/messages/me/6",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"wires",
+						"messages",
+						"me",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear Reación",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reaction\":\"😀\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/wires/messages/reaction/3",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"wires",
+						"messages",
+						"reaction",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear Comentario",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"comment\":\"Jejejejej genial!!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/wires/messages/comment/3",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"wires",
+						"messages",
+						"comment",
+						"3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

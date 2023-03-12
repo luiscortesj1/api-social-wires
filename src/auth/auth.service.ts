@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginUsuarioDto, CreateUserDto } from './dto/index';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
+import { sendEmail } from './helpers/sendEmails';
 
 @Injectable()
 export class AuthService {
@@ -27,9 +28,10 @@ export class AuthService {
         password: bcrypt.hashSync(password, 10),
       });
       await this.userRepository.save(user);
+      await sendEmail({ email: user.email, nombres: user.fullname });
       return user;
     } catch (error) {
-      this.handleDBErrors(error);
+      console.log(error);
     }
   }
 
@@ -79,11 +81,4 @@ export class AuthService {
    *
    * @param error : error de key duplicated
    */
-  private handleDBErrors(error: any): never {
-    if (error.code == '23505') {
-      throw new BadRequestException(error.message);
-    }
-    console.log(error);
-    throw new InternalServerErrorException('Revisar logs Server');
-  }
 }
