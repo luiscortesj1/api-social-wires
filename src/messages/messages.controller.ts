@@ -1,4 +1,4 @@
-import { ApiTags } from '@nestjs/swagger/dist';
+
 import {
   Controller,
   Get,
@@ -16,7 +16,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateReactionDto } from './dto/create-reaction.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
-@ApiTags('Messages')
+
 @Controller('messages')
 @UseGuards(JwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
